@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evento Digital: mapa competitivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500;700;900&family=Red+Hat+Text:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE trabalho: relatório executivo para o sócio decidir, tom de mesa de gráficos de jornal financeiro
+   IDEA um mapa de mercado com um quadrante vazio: os quatro brigam no mesmo canto, o cliente corporativo está sem dono
+   PICTURE mapa de posicionamento 2x2 grande, quatro concorrentes agrupados e o espaço livre marcado em magenta
+   COLOUR faixa azul oxford #0b1f4b, painéis brancos, magenta #e0115f para a oportunidade, cinzas frios
+   TYPE Red Hat Display 700/900 + Red Hat Text
+   LAYOUT laptop: título e números à esquerda, mapa à direita em faixa azul; celular: título, mapa, números */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#070f26);--ink:light-dark(#0e1530,#e8ecf7);--soft:light-dark(#5a6382,#9aa4c2);--line:light-dark(#dfe3ee,#1f2b4f);--panel:light-dark(#f4f6fb,#0d1838);--navy:#0b1f4b;--mag:#e0115f;--mag2:light-dark(#fde7ef,#3a0f24);--b1:#2f6bff;--b2:#13a07a;--b3:#ff8a1f;--b4:#8a5cff;--node:light-dark(#0b1f4b,#4a68c4)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Red Hat Text",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Red Hat Display",system-ui,sans-serif;line-height:1.05;letter-spacing:-.02em;text-wrap:balance;margin:0}
+h1{font-size:clamp(32px,4.4vw,52px);font-weight:900}
+h2{font-size:clamp(26px,3vw,38px);font-weight:700;margin-bottom:10px}
+h3{font-size:19px;font-weight:700}
+p{margin:0 0 12px;max-width:68ch}
+.band{padding-block:clamp(28px,4vw,64px);padding-inline:max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.hero{background:var(--navy);color:#fff}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(20px,3vw,48px);align-items:stretch}
+.kick{color:#b9c4e6;font-size:15px;margin-bottom:14px}
+.lead{color:#dfe5f7;font-size:17px;margin-top:16px}
+.nums{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:#24386b;margin-top:26px;border:1px solid #24386b}
+.nums div{background:var(--navy);padding:14px 14px 12px}
+.nums b{display:block;font:900 clamp(24px,2.6vw,32px)/1 "Red Hat Display",sans-serif;white-space:nowrap}
+.nums span{font-size:13px;color:#b9c4e6}
+.mapbox{background:#102a63;border:1px solid #24386b;padding:14px;display:flex;flex-direction:column}
+.mapbox .fig{flex:1;min-height:400px}
+.cap{font-size:13px;color:#b9c4e6;margin:8px 0 0}
+.fig{position:relative;min-height:340px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{font-family:"Red Hat Text",sans-serif}
+nav.scroll{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);display:flex;gap:4px;padding:6px max(5vw,16px);overflow-x:auto}
+nav.scroll a{flex:none;color:var(--ink);text-decoration:none;font-size:14px;padding:10px 12px;border-radius:8px}
+nav.scroll a:hover,nav.scroll a:focus-visible{background:var(--panel);outline:2px solid var(--mag);outline-offset:-2px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card h3{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.tag{font-size:13px;color:var(--soft);margin-bottom:10px}
+.good,.bad{font-size:15px;margin:10px 0 0;padding-left:0;list-style:none}
+.good li,.bad li{padding:5px 0 5px 22px;position:relative;border-top:1px solid var(--line)}
+.good li::before{content:"";position:absolute;left:0;top:12px;width:12px;height:6px;border-left:2px solid var(--b2);border-bottom:2px solid var(--b2);transform:rotate(-45deg)}
+.bad li::before{content:"";position:absolute;left:2px;top:13px;width:10px;height:2px;background:var(--mag)}
+.lbl{font:700 13px "Red Hat Display",sans-serif;color:var(--soft);margin-top:12px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{padding:10px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:700 14px "Red Hat Display",sans-serif;color:var(--soft)}
+td.c{text-align:center}
+.yes,.part,.no{display:inline-block;width:22px;height:22px;border-radius:50%;vertical-align:middle}
+.yes{background:var(--b2)}.part{background:linear-gradient(90deg,var(--b3) 50%,transparent 50%);border:2px solid var(--b3)}.no{border:2px solid var(--line);background:transparent}
+th.us,td.us{background:var(--mag2)}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:14px;color:var(--soft);margin-top:12px}
+.legend span{display:flex;align-items:center;gap:6px}
+.split{margin:14px 0}
+.split .row{display:grid;grid-template-columns:7.5em minmax(0,1fr);gap:12px;align-items:center;margin:12px 0}
+.split .name{font-weight:700}
+.bar{display:flex;height:34px;border-radius:6px;overflow:hidden;background:var(--panel);border:1px solid var(--line)}
+.bar i{display:flex;align-items:center;justify-content:center;color:#fff;font:700 13px "Red Hat Text";font-style:normal;white-space:nowrap;overflow:hidden}
+.range{position:relative;height:34px;border-radius:6px;background:var(--panel);border:1px solid var(--line)}
+.range i{position:absolute;top:4px;bottom:4px;border-radius:4px;background:var(--b2);display:flex;align-items:center;justify-content:center;color:#fff;font:700 13px "Red Hat Text";font-style:normal;white-space:nowrap}
+.fails{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.fail{border-top:4px solid var(--mag);background:var(--panel);padding:16px;border-radius:0 0 10px 10px}
+.fail b{font:900 30px/1 "Red Hat Display";color:var(--mag);display:block;margin-bottom:8px}
+.opps{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:24px;align-items:stretch}
+.opps .fig{min-height:440px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.olist{display:grid;gap:8px;align-content:start}
+.oi{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:start;padding:8px 0;border-bottom:1px solid var(--line)}
+.oi .k{width:30px;height:30px;border-radius:50%;background:var(--node);color:#fff;display:grid;place-items:center;font:700 14px "Red Hat Display"}
+.oi.top .k{background:var(--mag)}
+.oi b{display:block}
+.oi span{font-size:14px;color:var(--soft)}
+.paths{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.path{border:1px solid var(--line);border-radius:14px;padding:20px;background:var(--bg);display:flex;flex-direction:column}
+.path.rec{border:2px solid var(--mag);background:var(--mag2)}
+.path .badge{align-self:flex-start;font:700 13px "Red Hat Display";padding:5px 10px;border-radius:20px;background:var(--panel);color:var(--soft);margin-bottom:10px}
+.path.rec .badge{background:var(--mag);color:#fff}
+.meter{display:grid;grid-template-columns:9em minmax(0,1fr);gap:8px;align-items:center;font-size:14px;margin:6px 0}
+.meter div{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.meter div i{display:block;height:100%;background:var(--navy)}
+.path.rec .meter div i{background:var(--mag)}
+:root[data-theme=dark] .meter div i{background:#7d92d6}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .meter div i{background:#7d92d6}}
+.path p{font-size:15px}
+.verdict{margin-top:auto;padding-top:12px;font-weight:700;font-size:15px}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;counter-reset:s}
+.step{padding:18px 18px 18px 0;border-top:3px solid var(--navy);position:relative}
+.step::before{content:"";position:absolute;top:-9px;left:0;width:15px;height:15px;border-radius:50%;background:var(--mag)}
+.step h3{margin:10px 0 6px}
+.step p{font-size:15px;color:var(--soft)}
+.ask{background:var(--navy);color:#fff}
+.ask ol{margin:10px 0 0;padding-left:22px;font-size:17px;max-width:70ch}
+.ask li{margin:8px 0}
+.foot{font-size:13px;color:var(--soft)}
+.foot p{max-width:none}
+@media(max-width:900px){.hero .wrap,.opps,.grid2{grid-template-columns:minmax(0,1fr)}.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}.fails{grid-template-columns:repeat(2,minmax(0,1fr))}.paths{grid-template-columns:minmax(0,1fr)}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack th{border:0;padding:4px 0;font-size:15px;color:var(--ink)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:3px 0;text-align:right}.stack td::before{content:attr(data-l);color:var(--soft);text-align:left}.grid4,.fails,.steps{grid-template-columns:minmax(0,1fr)}.mapbox .fig{min-height:340px}.opps .fig{min-height:360px}table{font-size:13px}th,td{padding:7px 5px}.split .row{grid-template-columns:minmax(0,1fr)}.meter{grid-template-columns:7.5em minmax(0,1fr)}}
+@media(prefers-reduced-motion:no-preference){.us-pulse{animation:pulse 2.4s ease-in-out infinite}@keyframes pulse{50%{opacity:.35}}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+
+<header class="band hero">
+  <div class="wrap">
+    <div>
+      <p class="kick">Plataforma Evento Digital · análise para Daniel e sócio · novembro de 2026</p>
+      <h1>Os quatro líderes brigam pelo participante. O cliente corporativo está sem dono.</h1>
+      <p class="lead">Estudamos Banlek, Fotto, Fotop e Foco Radical por dentro: site, código público e painéis com contas próprias. Todos vendem foto avulsa a quem foi fotografado. Nenhum entrega à empresa o que ela compra de verdade: controle, dados dos convidados e retorno para o patrocinador.</p>
+      <div class="nums">
+        <div><b>R$ 260 mi</b><span>vendidos pela Banlek desde 2020</span></div>
+        <div><b>600 mi</b><span>fotos publicadas na Fotto</span></div>
+        <div><b>150 mil</b><span>fotógrafos na Fotop</span></div>
+        <div><b>2 mi</b><span>clientes da Foco Radical</span></div>
+      </div>
+    </div>
+    <div class="mapbox">
+      <div class="fig"><svg id="map" role="img" aria-label="Mapa de posicionamento: os quatro concorrentes no canto do participante e do autoatendimento; o quadrante do cliente corporativo com serviço gerenciado está vazio"></svg></div>
+      <p class="cap">Posição de cada um pela nossa leitura do produto, não por pesquisa de mercado.</p>
+    </div>
+  </div>
+</header>
+
+<nav class="scroll" aria-label="Seções">
+  <a href="#quem">Quem são</a><a href="#melhor">Melhor e pior</a><a href="#matriz">Funcionalidades</a><a href="#marketplace">Marketplaces</a><a href="#falhas">Onde falham</a><a href="#oportunidades">Oportunidades</a><a href="#caminhos">Três caminhos</a><a href="#proximos">Próximos passos</a>
+</nav>
+
+<section class="band" id="quem">
+  <div class="wrap">
+    <h2>Quatro empresas grandes, um mesmo modelo: 8% a 10% sobre a foto vendida</h2>
+    <p>O negócio é comprovado e cresce com as corridas de rua. Mas a receita fica na comissão sobre o participante, e é aí que a briga de preço já acontece.</p>
+    <div class="scroll"><table class="stack">
+      <thead><tr><th></th><th>Banlek</th><th>Fotto</th><th>Fotop</th><th>Foco Radical</th></tr></thead>
+      <tbody id="who"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="band" id="melhor" style="background:var(--panel)">
+  <div class="wrap">
+    <h2>O que copiar de cada um e o que fazer melhor</h2>
+    <div class="grid4" id="cards"></div>
+  </div>
+</section>
+
+<section class="band" id="matriz">
+  <div class="wrap">
+    <h2>O básico já está tomado. A coluna da direita está vazia</h2>
+    <p>Reconhecimento facial, Pix, marca própria e recrutamento de fotógrafos viraram obrigação. As linhas de baixo, voltadas ao cliente corporativo, ninguém tem.</p>
+    <div class="scroll"><table>
+      <thead><tr><th>Funcionalidade</th><th class="c">Banlek</th><th class="c">Fotto</th><th class="c">Fotop</th><th class="c">Foco</th><th class="c us">Nós</th></tr></thead>
+      <tbody id="feat"></tbody>
+    </table></div>
+    <div class="legend"><span><i class="yes"></i>tem</span><span><i class="part"></i>parcial ou como opção</span><span><i class="no"></i>não vimos</span></div>
+  </div>
+</section>
+
+<section class="band" id="marketplace" style="background:var(--panel)">
+  <div class="wrap grid2">
+    <div>
+      <h2>Escalar freelancers já existe dentro das plataformas</h2>
+      <p>Três das quatro têm um marketplace onde um organizador ou agência publica o evento, abre vagas e a receita se divide sozinha. Uma produtora com rede própria consegue operar hoje na Banlek ficando com cerca de 40%.</p>
+      <p>Isso tira a parte "gestão de freelancers" da nossa lista de diferenciais. O que continua sem dono é o lado do cliente que contrata o evento.</p>
+    </div>
+    <div class="split">
+      <div class="row"><span class="name">Banlek</span><div class="bar" aria-label="Banlek 1 por cento, fotógrafo 58, organização 41"><i style="width:1%;background:#6b7598"></i><i style="width:58%;background:var(--b2)">fotógrafo 58%</i><i style="width:41%;background:var(--navy)">agência 41%</i></div></div>
+      <div class="row"><span class="name">Fotto</span><div class="range" aria-label="Fotógrafo fica com 50 a 85 por cento"><i style="left:50%;width:35%">fotógrafo 50–85%</i></div></div>
+      <div class="row"><span class="name">Fotop</span><div class="range" aria-label="Fotógrafo fica com 45 a 90 por cento"><i style="left:45%;width:45%">fotógrafo 45–90%</i></div></div>
+      <p class="cap" style="color:var(--soft)">Banlek: evento real de basquete no Ibirapuera publicado por uma agência (Banlek fica com 1%). Fotto e Fotop: faixas vistas nas listas de oportunidades em 23/11/2026; o resto fica com organizador e plataforma.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="falhas">
+  <div class="wrap">
+    <h2>Cinco lugares onde todos falham</h2>
+    <div class="fails" id="fails"></div>
+  </div>
+</section>
+
+<section class="band" id="oportunidades" style="background:var(--panel)">
+  <div class="wrap">
+    <h2>Oito oportunidades, e três que valem começar</h2>
+    <p>Impacto e esforço pela nossa avaliação. Em magenta, as três que mais combinam com a produtora: patrocinador pagando a foto, privacidade corporativa e a base de convidados virando CRM do organizador.</p>
+    <div class="opps">
+      <div class="fig" style="background:var(--bg)"><svg id="bub" role="img" aria-label="Gráfico de impacto por esforço das oito oportunidades"></svg></div>
+      <div class="olist" id="olist"></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="caminhos">
+  <div class="wrap">
+    <h2>Três caminhos para o produto. A recomendação é começar pelo primeiro</h2>
+    <p>O serviço paga a conta e ensina o que a plataforma precisa ter. Notas de 1 a 5 pela nossa avaliação.</p>
+    <div class="paths" id="paths"></div>
+  </div>
+</section>
+
+<section class="band" id="proximos">
+  <div class="wrap">
+    <h2>Próximos 30 dias: validar antes de construir</h2>
+    <div class="steps" id="steps"></div>
+  </div>
+</section>
+
+<section class="band ask">
+  <div class="wrap">
+    <h2>O que precisamos do sócio</h2>
+    <ol>
+      <li>Quantos eventos corporativos a produtora faz por mês e quem paga a fotografia hoje: o cliente ou a produtora.</li>
+      <li>Três a cinco clientes corporativos dispostos a uma conversa de 20 minutos.</li>
+      <li>Cinco a oito fotógrafos da rede para a entrevista (o roteiro está pronto).</li>
+      <li>Um evento nos próximos 60 dias para servir de piloto.</li>
+    </ol>
+  </div>
+</section>
+
+<footer class="band foot">
+  <div class="wrap">
+    <p><b>Método.</b> Leitura das páginas públicas, análise com a ferramenta REA do código que cada site entrega ao navegador, e navegação só de leitura em contas grátis de fotógrafo criadas por Daniel (Banlek, Fotto e Fotop; na Foco Radical só a área de cliente). Nenhuma chamada de API feita por fora dos sites, nenhum código copiado.</p>
+    <p><b>Fontes dos números.</b> Banlek: Brazil Journal (abr/2025, R$ 260 mi vendidos e R$ 16 mi de receita no ano anterior). Fotto: site próprio (600 mi de fotos em jul/2026, R$ 140 mi pagos, 20 mil fotógrafos ativos). Fotop: entrevista do CEO ao Times Brasil (out/2026, mais de 150 mil fotógrafos). Foco Radical: site próprio (2 mi de clientes, 6 mil fotógrafos ativos). Relatórios completos no repositório evento-digital, pasta docs/concorrentes.</p>
+  </div>
+</footer>
+
+<script>
+{
+const C=[
+ {n:"Banlek",c:"var(--b1)",x:.36,y:.2,tag:"A mais completa e agressiva",g:["Plano corporativo pronto: R$ 97/mês com marca própria","\"Comprar tudo em que apareço\" num clique","Pré-venda do pacote antes das fotos saírem","Ferramentas de organizador: autoriza, avalia e mede cada fotógrafo"],b:["Álbum aberto por padrão: reclamações de exposição","Descarta a selfie e não avisa de foto nova","Taxa de R$ 0,99 escondida no checkout"]},
+ {n:"Fotto",c:"var(--b2)",x:.14,y:.13,tag:"A preferida do fotógrafo (Alboom)",g:["Entrega pelo WhatsApp com número próprio","10% fixos e tudo grátis","Lista de compradores com telefone","Carrinho abandonado com status de contato"],b:["Organizador só aparece para recrutar fotógrafo","WhatsApp entra só depois da compra no site"]},
+ {n:"Fotop",c:"var(--b3)",x:.44,y:.32,tag:"A veterana das grandes provas",g:["Painel de organizador de verdade","Modo distribuir grátis para corporativo","Download pelo organizador e nota fiscal","Área de Jobs para contratar fotógrafo"],b:["Site do participante antigo, lento e com anúncios","Fotógrafo fica com 50% nos eventos grandes"]},
+ {n:"Foco Radical",c:"var(--b4)",x:.24,y:.4,tag:"A que guarda o rosto",g:["Rosto salvo e \"todas as suas fotos de hoje\"","Vídeo por reconhecimento facial","Pontos do comprador que viram cupom"],b:["Exclusividade com punição ao fotógrafo","Guardar biometria aumenta o risco regulatório","Aprovação manual e lenta do fotógrafo"]}
+];
+const who=[["Foco","Esporte, futebol, corporativo","Esporte e eventos","Corrida e treinos","Corrida; social via FotosBy"],["Taxa ao fotógrafo","9–10%, repassável","10% fixa","a partir de 8%","10% + exclusividade"],["Organizador","Plano R$ 97/mês","Só recruta fotógrafo","Painel próprio","Formulário de cobertura"],["Rosto do participante","Descarta","Não guarda","Não confirmado","Guarda na conta"],["Entrega","Site","Site + WhatsApp","Site + WhatsApp (opção)","Site"],["Tecnologia","Moderna, AWS","Moderna","Antiga no site","Moderna"]];
+document.getElementById("who").innerHTML=who.map(r=>"<tr><th>"+r[0]+"</th>"+r.slice(1).map(v=>"<td>"+v+"</td>").join("")+"</tr>").join("");
+document.getElementById("cards").innerHTML=C.map(c=>`<article class="card"><h3><span class="dot" style="background:${c.c}"></span>${c.n}</h3><div class="tag">${c.tag}</div><div class="lbl">Copiar</div><ul class="good">${c.g.map(x=>"<li>"+x+"</li>").join("")}</ul><div class="lbl">Fazer melhor</div><ul class="bad">${c.b.map(x=>"<li>"+x+"</li>").join("")}</ul></article>`).join("");
+const Y="yes",P="part",N="no";
+const F=[["Busca por selfie e número de peito",Y,Y,Y,Y,Y],["Pix, cartão e saque rápido",Y,Y,Y,Y,Y],["Loja com marca própria",Y,Y,Y,Y,Y],["Recrutar freelancers com divisão de receita",Y,Y,Y,P,Y],["Distribuir fotos grátis no corporativo",Y,N,Y,N,Y],["Entrega pelo WhatsApp",N,P,P,N,Y],["Avisar o participante de foto nova",P,P,N,Y,Y],["Jornada inteira dentro do WhatsApp",N,N,N,N,Y],["Cliente aprova as fotos antes de publicar",N,N,N,N,Y],["Base de convidados com opt-in para o organizador",N,N,N,N,Y],["Relatório para patrocinador",N,N,N,N,Y],["Contrato e nota únicos do evento inteiro",N,N,P,N,Y]];
+document.getElementById("feat").innerHTML=F.map(r=>"<tr><td>"+r[0]+"</td>"+r.slice(1).map((v,i)=>`<td class="c${i==4?" us":""}"><i class="${v}" aria-label="${v=="yes"?"tem":v=="part"?"parcial":"não"}"></i></td>`).join("")+"</tr>").join("");
+const FA=[["Cliente corporativo","Ninguém vende aprovação, privacidade e contrato único à empresa."],["Dados do convidado","A base fica com a plataforma ou o fotógrafo, nunca com o organizador."],["WhatsApp","É canal de entrega, não o lugar onde a experiência acontece."],["Pós-evento","Só a Foco tenta manter relação com o participante depois."],["Conversão","Mesmo nas contas otimistas, 75% a 90% do público não compra nada."]];
+document.getElementById("fails").innerHTML=FA.map((f,i)=>`<div class="fail"><b>${i+1}</b><h3>${f[0]}</h3><p style="font-size:15px;margin-top:6px">${f[1]}</p></div>`).join("");
+const O=[["A","Evento como mídia","Patrocinador paga a foto grátis com a marca dele e recebe relatório",5,3,1],["B","Jornada no WhatsApp","Selfie, fotos durante o evento, Pix e aviso, sem sair da conversa",4,3,0],["C","Privacidade corporativa","Cliente aprova antes, galeria fechada, \"não quero aparecer\"",4,2,1],["D","CRM do evento recorrente","Convidados com opt-in viram base do organizador para a próxima edição",5,3,1],["E","Credenciamento integrado","Autoriza no check-in do ingresso e as fotos chegam sem selfie",3,4,0],["F","Conteúdo pronto com IA","Vídeo por participante e kit temático para a empresa em 24 horas",3,3,0],["G","Equipe sob demanda garantida","Rede do sócio com prazo, reserva, briefing e nota única",4,2,0],["H","Preço por evento","Valor fechado em vez de comissão sobre foto vendida",3,1,0]];
+document.getElementById("olist").innerHTML=O.map(o=>`<div class="oi${o[5]?" top":""}"><span class="k">${o[0]}</span><div><b>${o[1]}</b><span>${o[2]}</span></div></div>`).join("");
+const PA=[["Agência digital de fotos corporativas","Recomendado",true,"A produtora vende o evento completo à empresa com tecnologia leve: WhatsApp, aprovação e relatório. No começo a galeria pode rodar sobre uma plataforma existente.",[["Caixa rápido",5],["Pouco investimento",5],["Usa o ativo do sócio",5],["Defesa contra cópia",3],["Escala",2]],"Receita por evento. Cresce no ritmo da operação, mas paga a conta desde o primeiro mês."],["Plataforma para organizadores e agências","Evolução",false,"Produto com a marca do cliente para produtoras e agências: aprovação, privacidade, CRM de convidados, WhatsApp e patrocínio.",[["Caixa rápido",2],["Pouco investimento",2],["Usa o ativo do sócio",4],["Defesa contra cópia",4],["Escala",5]],"Assinatura mais valor por participante. É onde o caminho 1 deve chegar."],["Marketplace no WhatsApp para o participante","Não começar",false,"Competir com Banlek e Fotto pelo fotógrafo e pelo comprador, com jornada no WhatsApp e rosto salvo com consentimento.",[["Caixa rápido",2],["Pouco investimento",1],["Usa o ativo do sócio",2],["Defesa contra cópia",2],["Escala",4]],"Comissão de 8% a 10% contra empresas com até 20 anos de casa. A briga mais cara."]];
+document.getElementById("paths").innerHTML=PA.map((p,i)=>`<article class="path${p[2]?" rec":""}"><span class="badge">Caminho ${i+1} · ${p[1]}</span><h3>${p[0]}</h3><p style="margin-top:8px">${p[3]}</p>${p[4].map(m=>`<div class="meter"><span>${m[0]}</span><div aria-label="${m[1]} de 5"><i style="width:${m[1]*20}%"></i></div></div>`).join("")}<p class="verdict">${p[5]}</p></article>`).join("");
+const ST=[["Semana 1","Sócio","Levantar eventos por mês, quem paga a fotografia e escolher um evento piloto."],["Semanas 1 e 2","Clientes","Conversar com 3 a 5 clientes corporativos sobre aprovação, WhatsApp e relatório."],["Semanas 2 e 3","Fotógrafos","Entrevistar 5 a 8 freelancers com o roteiro pronto."],["Semana 4","Decisão","Fechar proposta do piloto, preço por evento e o mínimo de tecnologia."]];
+document.getElementById("steps").innerHTML=ST.map(s=>`<div class="step"><div class="tag" style="margin:14px 0 0">${s[0]}</div><h3>${s[1]}</h3><p>${s[2]}</p></div>`).join("");
+
+const map=document.getElementById("map");
+const drawMap=()=>{const W=map.clientWidth,H=map.clientHeight;if(!W||!H)return;const m={l:28,r:14,t:16,b:30},w=W-m.l-m.r,h=H-m.t-m.b,sm=W<520;
+ const X=v=>m.l+v*w,Yy=v=>m.t+(1-v)*h;let s="";
+ s+=`<rect x="${X(.5)}" y="${Yy(1)}" width="${w/2}" height="${h/2}" fill="#e0115f" fill-opacity=".14" stroke="#e0115f" stroke-dasharray="6 5"/>`;
+ s+=`<line x1="${X(.5)}" y1="${Yy(0)}" x2="${X(.5)}" y2="${Yy(1)}" stroke="#3a5190"/><line x1="${X(0)}" y1="${Yy(.5)}" x2="${X(1)}" y2="${Yy(.5)}" stroke="#3a5190"/>`;
+ s+=`<rect x="${X(0)}" y="${Yy(1)}" width="${w}" height="${h}" fill="none" stroke="#3a5190"/>`;
+ s+=`<text x="${X(0)}" y="${H-8}" fill="#b9c4e6" font-size="13">${sm?"participante":"Vende ao participante"}</text><text x="${X(1)}" y="${H-8}" fill="#b9c4e6" font-size="13" text-anchor="end">${sm?"empresa":"Vende à empresa"}</text>`;
+ s+=`<text transform="translate(16 ${Yy(0)}) rotate(-90)" fill="#b9c4e6" font-size="13">${sm?"autoatendimento":"Autoatendimento"}</text><text transform="translate(16 ${Yy(1)}) rotate(-90)" fill="#b9c4e6" font-size="13" text-anchor="end">${sm?"serviço":"Serviço gerenciado"}</text>`;
+ s+=`<text x="${X(.75)}" y="${Yy(.9)}" fill="#ffffff" font-size="${sm?14:16}" font-weight="700" text-anchor="middle" style="paint-order:stroke;stroke:#102a63;stroke-width:4px">Espaço sem dono</text>`;
+ s+=`<circle class="us-pulse" cx="${X(.8)}" cy="${Yy(.68)}" r="${sm?26:34}" fill="#e0115f" fill-opacity=".25"/><circle cx="${X(.8)}" cy="${Yy(.68)}" r="${sm?12:15}" fill="#e0115f"/><text x="${X(.8)}" y="${Yy(.68)+(sm?32:40)}" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle" style="paint-order:stroke;stroke:#102a63;stroke-width:4px">Evento Digital</text>`;
+ const cols=["#2f6bff","#13a07a","#ff8a1f","#8a5cff"],off=[[16,-10],[16,4],[16,4],[16,4]];
+ C.forEach((c,i)=>{const cx=X(c.x),cy=Yy(c.y);s+=`<circle cx="${cx}" cy="${cy}" r="${sm?8:11}" fill="${cols[i]}" stroke="#fff" stroke-width="2"/><text x="${cx+off[i][0]}" y="${cy+off[i][1]+4}" fill="#fff" font-size="14" font-weight="700" style="paint-order:stroke;stroke:#102a63;stroke-width:4px">${c.n}</text>`});
+ map.innerHTML=s};
+const ro1=new ResizeObserver(drawMap);ro1.observe(map);
+
+const bub=document.getElementById("bub");
+const css=getComputedStyle(document.documentElement);
+const drawBub=()=>{const W=bub.clientWidth,H=bub.clientHeight;if(!W||!H)return;const sm=W<520,m={l:sm?34:46,r:18,t:18,b:sm?40:46},w=W-m.l-m.r,h=H-m.t-m.b;
+ const X=e=>m.l+(e-.5)/5*w,Yy=i=>m.t+(1-(i-2.5)/3)*h;let s="";
+ s+=`<rect x="${X(.5)}" y="${Yy(5.5)}" width="${X(3)-X(.5)}" height="${Yy(3.5)-Yy(5.5)}" fill="var(--mag2)"/>`;
+ s+=`<text x="${X(.65)}" y="${Yy(5.5)+18}" fill="var(--soft)" font-size="13">Alto impacto, esforço menor</text>`;
+ for(let k=1;k<=5;k++){s+=`<line x1="${X(k)}" y1="${Yy(2.5)}" x2="${X(k)}" y2="${Yy(5.5)}" stroke="var(--line)"/><text x="${X(k)}" y="${H-m.b+18}" fill="var(--soft)" font-size="13" text-anchor="middle">${k}</text>`}
+ for(let k=3;k<=5;k++){s+=`<line x1="${X(.5)}" y1="${Yy(k)}" x2="${X(5.5)}" y2="${Yy(k)}" stroke="var(--line)"/><text x="${m.l-10}" y="${Yy(k)+4}" fill="var(--soft)" font-size="13" text-anchor="end">${k}</text>`}
+ s+=`<text x="${m.l+w/2}" y="${H-6}" fill="var(--soft)" font-size="13" text-anchor="middle">Esforço para fazer</text><text transform="translate(12 ${m.t+h/2}) rotate(-90)" fill="var(--soft)" font-size="13" text-anchor="middle">Impacto</text>`;
+ const tot={},seen={};O.forEach(o=>{const k=o[4]+"-"+o[3];tot[k]=(tot[k]||0)+1});
+ O.forEach(o=>{const key=o[4]+"-"+o[3];const n=seen[key]=(seen[key]||0)+1;const gap=sm?28:36;const cx=X(o[4])+(n-1-(tot[key]-1)/2)*gap,cy=Yy(o[3]),r=sm?13:17;
+  s+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${o[5]?"#e0115f":"var(--node)"}" stroke="var(--bg)" stroke-width="2"/><text x="${cx}" y="${cy+5}" fill="#fff" font-size="${sm?13:15}" font-weight="700" text-anchor="middle" style="font-family:'Red Hat Display'">${o[0]}</text>`});
+ bub.innerHTML=s};
+const ro2=new ResizeObserver(drawBub);ro2.observe(bub);
+}
+</script>
+</body>
+</html>
